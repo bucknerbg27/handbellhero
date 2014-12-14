@@ -1,9 +1,9 @@
-# Handbell Hero
+# Handbell Hero!
+
+<img src="https://raw.githubusercontent.com/panurgy/handbellhero/master/resources/handbell-hero-01.png">
 
 ### Quick Overview
 Grab 4 to 8 people, the [KidsPlay Handbell Set](http://www.grothmusic.com/p-41-kidsplay-8-note-diatonic-handbell-set.aspx), and ring yourself silly with a bunch of Christmas tunes.
-
-TODO: Youtube link here
 
 ### Background
 For the background of this project, and helpful information, check out [my blog entry](http://panurgynet.blogspot.com/2014/12/handbell-hero.html).
