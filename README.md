@@ -3,6 +3,7 @@
 ### Quick Overview
 Grab 4 to 8 people, the [KidsPlay Handbell Set](http://www.grothmusic.com/p-41-kidsplay-8-note-diatonic-handbell-set.aspx), and ring yourself silly with a bunch of Christmas tunes.
 
+TODO: Youtube link here
 
 ### Background
 For the background of this project, and helpful information, check out [my blog entry](http://panurgynet.blogspot.com/2014/12/handbell-hero.html).
@@ -32,6 +33,18 @@ This game currently works best with the MIDI files that are provided. Visit the 
    * The [audio effect](http://grooveshark.com/#!/album/The+Recordist+Free+Sound+FX/3955075) on the selection menu, which adds to the audible effect of the game.
    * Apache [FilenameUtils](http://commons.apache.org/proper/commons-io/apidocs/org/apache/commons/io/FilenameUtils.html) - they have libraries that make coding easier (and less cumbersome).
    
+### Copyright/License
+
+This software **may not** be used for any commercial (for-profit) purposes. Instead, you're encouraged to:
+
+   * Help install/run this at a school, and give kids the gift of music and teamwork (without charging them for your "services").
+   * Entertain your family, friends, or co-workers at a holiday gathering (again, at no charge).
+   
+### Disclaimer
+
+Use this software at your own risk. There are no guarantees	of any kind - think about buying a lottery ticket instead.
+
+
 ### Contact info
 
 If you love it, hate it, or have any questions or comments, let me know on [Twitter @Panurgy](https://twitter.com/panurgy)
