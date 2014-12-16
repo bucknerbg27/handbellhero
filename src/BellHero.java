@@ -292,6 +292,21 @@ public class BellHero extends Application {
     private void startTimer(int repeatDelay) {
         TimerTask timerTask = new TimerTask() {
             public void run() {
+
+                if ( (lastTickPlayed > 0) &&
+                     !player.getSequencer().isRunning() ) {
+                    // the player has finished with the song
+                    timer.cancel();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ignored) {}
+                    Platform.runLater(new Runnable() {
+                        public void run() {
+                            primaryStage.close();
+                        }
+                    });
+                }
+
                 loopsUntilPlaybackStarts --;
                 if (loopsUntilPlaybackStarts == 0) {
                     player.startPlayback();
