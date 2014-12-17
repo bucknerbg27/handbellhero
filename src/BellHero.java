@@ -201,7 +201,6 @@ public class BellHero extends Application {
 
         float tempoMPQ = player.getSequencer().getTempoInMPQ();
         float tempoBPM = player.getSequencer().getTempoInBPM();
-        int tempoEvent = player.findTempoEvent();
 
         float beatsPerSecond = tempoBPM/60;
 
@@ -229,12 +228,16 @@ public class BellHero extends Application {
         }
         startTimer( (int) loopMilliseconds); 
 
+        List<MidiEvent> tempoEventList = player.findTempoEvents();
         if (DEBUG) {
             System.out.println("tempoMPQ = " + tempoMPQ);
             System.out.println("tempoBPM = " + tempoBPM);
-            System.out.println("tempo Event = " + tempoEvent);
             System.out.println("loopMilliseconds  = " + loopMilliseconds);
             System.out.println("ticksPerRefresh = " + ticksPerRefresh);
+
+            if (!tempoEventList.isEmpty()) {
+                tempoEventList.stream().forEach(ev -> player.parseTempo(ev));
+            }
         }
         
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {

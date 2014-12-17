@@ -224,18 +224,15 @@ sequencer1.addMetaEventListener(new MetaEventListener() {
 
     /**
      * Searches the MIDI stream to find a Tempo event and 
-     * returns its value.
-     * Returns -1 if it's not found.
+     * returns any/all that are found.
      */
-    public int findTempoEvent() {
+    public List<MidiEvent> findTempoEvents() {
         Track track = findBiggestTrack();
         int size = track.size();
+        List<MidiEvent> list = new ArrayList<>();
 
         for (int i=0; i < size; i++) {
             MidiEvent midiEvent = track.get(i);
-            if (midiEvent.getTick() != 0) {
-                return -1;
-            }
             MidiMessage message = midiEvent.getMessage();
             byte[] buf = message.getMessage();
             if (buf.length > 3 &&
@@ -244,11 +241,11 @@ sequencer1.addMetaEventListener(new MetaEventListener() {
                 buf[2] == (byte) 0x03) {
                 // looks like a tempo event!
                 int tempo = parseTempo(midiEvent);
-                return tempo;
+                list.add(midiEvent);
             }
         }
 
-        return -1;
+        return list;
     }
 
     /**
@@ -275,9 +272,6 @@ sequencer1.addMetaEventListener(new MetaEventListener() {
             throw new RuntimeException("message type was " + message[1] +" + " + message[2] + ", expected 0x51 (81d) + 0x03");
         }
 
-        if (BellHero.DEBUG) {
-            System.out.println("Parsing tempo message: " + Arrays.toString(message));
-        }
         int tempo = 0;
         for (int i=3; i < message.length; i++) {
             int lame = message[i];
@@ -286,7 +280,8 @@ sequencer1.addMetaEventListener(new MetaEventListener() {
         }
 
         if (BellHero.DEBUG) {
-            System.out.println("Looks like the tempo is " + tempo);
+            System.out.println("At tick " + ev.getTick() +
+                    ", the tempo is " + tempo);
         }
         return tempo;
     }
