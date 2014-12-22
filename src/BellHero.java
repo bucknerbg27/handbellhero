@@ -7,6 +7,7 @@ import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.effect.*;
 import javafx.scene.image.*;
+import javafx.scene.input.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.scene.text.*;
@@ -26,7 +27,7 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class BellHero extends Application {
 
-    public static final boolean DEBUG = 
+    public static final boolean DEBUG =
         "true".equalsIgnoreCase(System.getProperty("debug"));
 
 
@@ -34,7 +35,7 @@ public class BellHero extends Application {
      * The screen size to use. Eventually it would be nice to make this
      * dynamic, based on the current size of the window.
      */
-    public static final int WIDTH = 1450, HEIGHT = 700, 
+    public static final int WIDTH = 1450, HEIGHT = 700,
            SLIDER_TOP = HEIGHT/10 + 40,
            SLIDER_BOTTOM = HEIGHT - 80;
 
@@ -70,7 +71,7 @@ public class BellHero extends Application {
     private static final String[] NOTE_LABELS = new String[] {
         "Low C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "High C" };
 
-    
+
     /** The "sliders" to display on-screen. */
     private Slider[] sliders = new Slider[8];
 
@@ -103,7 +104,7 @@ public class BellHero extends Application {
 
     /** The last tick played by the player/sequencer */
     private long lastTickPlayed;
-    
+
     /** The number of ticks to process every time the refresh timer loops. */
     private float ticksPerRefresh;
 
@@ -151,7 +152,7 @@ public class BellHero extends Application {
         }
     }
 
-    public void loadAndPlay(String filename, Stage primaryStage) 
+    public void loadAndPlay(String filename, Stage primaryStage)
         throws Exception {
         this.primaryStage = primaryStage;
         player = new Player(filename);
@@ -177,8 +178,8 @@ public class BellHero extends Application {
         hollyView.setX(50);
         hollyView.setY(0);
         root.getChildren().add(hollyView);
-            
-        
+
+
         Text t = new Text((WIDTH/2)-250, 350, "Ready");
         t.setFont(new Font("Nightmare Hero", 300));
         t.setStroke(Color.ORANGE);
@@ -187,14 +188,28 @@ public class BellHero extends Application {
         readyLabel = t;
         //readyLabel.getStyleClass().add("ready-text");
         root.getChildren().add(readyLabel);
-        
-        
+
+
         for (int i=0; i < sliders.length; i++) {
             sliders[i] = new Slider(i);
             root.getChildren().add(sliders[i]);
         }
 
         primaryStage.show();
+        primaryStage.toFront();
+
+        // Huge thanks to StackOverflow:
+        // http://stackoverflow.com/questions/14357515/javafx-close-window-on-pressing-esc
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent t) {
+                if (t.getCode() == KeyCode.ESCAPE) {
+                    stopPlayerAndClose();
+                }
+            }
+        });
+
 
         // How many times whould we refresh the note's position on-screen
         loopsUntilPlaybackStarts = refreshLoopsPerSecond;
@@ -204,10 +219,10 @@ public class BellHero extends Application {
 
         float beatsPerSecond = tempoBPM/60;
 
-        // The following is crappy incorrect math that just happened to 
+        // The following is crappy incorrect math that just happened to
         // work consistently on a few MIDI files I found.
         float loopMilliseconds = 1000.0f / refreshLoopsPerSecond;
-        float ticksPerSecond = tempoMPQ/1000; 
+        float ticksPerSecond = tempoMPQ/1000;
         // TOTAL BS HERE - it just happens to make things work better with
         //   the set of MIDI files that we have
         ticksPerSecond = 1700;
@@ -226,7 +241,7 @@ public class BellHero extends Application {
             ticksPerSecond = Integer.parseInt(override);
             ticksPerRefresh = ticksPerSecond / refreshLoopsPerSecond;
         }
-        startTimer( (int) loopMilliseconds); 
+        startTimer( (int) loopMilliseconds);
 
         List<MidiEvent> tempoEventList = player.findTempoEvents();
         if (DEBUG) {
@@ -239,44 +254,55 @@ public class BellHero extends Application {
                 tempoEventList.stream().forEach(ev -> player.parseTempo(ev));
             }
         }
-        
+
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
-                player.getSequencer().stop();
-                timer.cancel();
+                stopPlayer();
             }
-        });        
-        
+        });
+
         buildBackgroundLines();
+    }
+
+    /** Stops the player and cancels the timer. */
+    public void stopPlayer() {
+        player.getSequencer().stop();
+        timer.cancel();
+    }
+
+    /** Stops everything, and closes the stage/window */
+    public void stopPlayerAndClose() {
+        stopPlayer();
+        primaryStage.close();
     }
 
     /** Builds the background lines */
     private void buildBackgroundLines() {
-/*        
+/*
         Polygon top = new Polygon(new Double[] {
             0, 0,
             0, 200,
             200, 100
             400, 300
-            
+
         for (int i=0; i < 6; i++) {
             Line line = new Line();
             line.
 
-            line = new Line(xOffset, SLIDER_TOP, xOffset, 
+            line = new Line(xOffset, SLIDER_TOP, xOffset,
                     SLIDER_BOTTOM - dropCircleRadiusY);
             line.setStrokeWidth(8);
             line.setStrokeLineCap(StrokeLineCap.ROUND);
             /*
             RadialGradient gradient = new RadialGradient(
-                    0, .1, 10, 10, 10, false, CycleMethod.REPEAT, 
+                    0, .1, 10, 10, 10, false, CycleMethod.REPEAT,
                     new Stop(0, Color.web("white", 0.5).darker()),
                     new Stop(1, Color.web("white", 0.5).brighter()) );
                     * /
             line.setStroke(Color.web("white", 0.8));
             Shadow lineglow = new Shadow(BlurType.GAUSSIAN, Color.WHITE, 10);
             line.setEffect(lineglow);
-                
+
 */
     }
 
@@ -287,8 +313,8 @@ public class BellHero extends Application {
     public void stop() {
         System.exit(0);
     }
-    
-    /** Starts the timer (which updates the notes on the sliders) 
+
+    /** Starts the timer (which updates the notes on the sliders)
      * @param repeatDelay the number of milliseconds to wait between
      * updates.
      **/
@@ -320,7 +346,7 @@ public class BellHero extends Application {
                 }
             }
         };
-        
+
         timer.scheduleAtFixedRate(timerTask, 2000, repeatDelay);
     }
 
@@ -338,9 +364,9 @@ public class BellHero extends Application {
         }
     }
 
-    /** 
+    /**
      * The task that is invoked by the timer, which updates
-     * the notes on the sliders. 
+     * the notes on the sliders.
      **/
     private void updateSliders() {
         long currentTickPlayer = player.getSequencer().getTickPosition();
@@ -359,8 +385,8 @@ public class BellHero extends Application {
 //            });
 //        }
 
-        
-        // there's two ways that we calculate the future/next tick. 
+
+        // there's two ways that we calculate the future/next tick.
         // If the player is not running (currentTickPlayer == 0), then
         //    we use math. This works at the start, but eventually the
         //    player "drifts" ahead of the math, and becomes noticable.
@@ -448,7 +474,7 @@ public class BellHero extends Application {
     }
 
 
-    /** 
+    /**
      * Contains the "sliders" that show the notes to be played.
      */
     class Slider extends Group {
@@ -477,13 +503,13 @@ public class BellHero extends Application {
             int xOffset = (sliderIndex * sliderWidth) + sliderWidth;
             slidingNotes = new ArrayList<>();
 
-            line = new Line(xOffset, SLIDER_TOP, xOffset, 
+            line = new Line(xOffset, SLIDER_TOP, xOffset,
                     SLIDER_BOTTOM - dropCircleRadiusY);
             line.setStrokeWidth(8);
             line.setStrokeLineCap(StrokeLineCap.ROUND);
             /*
             RadialGradient gradient = new RadialGradient(
-                    0, .1, 10, 10, 10, false, CycleMethod.REPEAT, 
+                    0, .1, 10, 10, 10, false, CycleMethod.REPEAT,
                     new Stop(0, Color.web("white", 0.5).darker()),
                     new Stop(1, Color.web("white", 0.5).brighter()) );
                     */
@@ -507,7 +533,7 @@ public class BellHero extends Application {
 
         /**
          * Decides whether the "drop zone" ellipse at the bottom
-         * should get brighter. 
+         * should get brighter.
          **/
         private void lightUp(boolean makeYourDayBrighter) {
             if (makeYourDayBrighter == isLitUp) {
@@ -540,14 +566,14 @@ public class BellHero extends Application {
          * Increments any/all of the notes/circles present
          *
          * This must be performed on the FX thread!
-         * 
+         *
          * @param addNote if true, a new note is added to this slider.
          */
         public void tick(boolean addNote) {
 
             boolean lightUp = false;
 
-            double sliderIncrement = (line.getEndY() - line.getStartY()) / 
+            double sliderIncrement = (line.getEndY() - line.getStartY()) /
                 refreshLoopsPerSecond;
             for (Ellipse disc : new ArrayList<Ellipse>(slidingNotes)) {
                 double newY = disc.getCenterY() + sliderIncrement;
@@ -575,7 +601,7 @@ public class BellHero extends Application {
                 getChildren().add(disc);
                 slidingNotes.add(disc);
             }
-           
+
             lightUp(lightUp);
         }
 
