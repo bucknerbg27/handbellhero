@@ -43,6 +43,8 @@ This software **may not** be used for any commercial (for-profit) purposes. Inst
 
    * Help install/run this at a school, and give kids the gift of music and teamwork (without charging them for your "services").
    * Entertain your family, friends, or co-workers at a holiday gathering (again, at no charge).
+
+If you enjoy this project, post a comment [on the blog](http://panurgynet.blogspot.com/2014/12/handbell-hero.html), or send a tweet using [#handbellhero](https://twitter.com/search?q=%23handbellhero&src=typd)!
    
 ### Disclaimer
 
