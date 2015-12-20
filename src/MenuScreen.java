@@ -44,7 +44,7 @@ public class MenuScreen extends Application {
     private static final String SELECT_SOUND_EFFECT = "Hit_Metal_Hollow.mp3";
 
     /** The CSS file to use */
-    
+
     /** Plays the "thunk" sound when something is selected. */
     private MediaPlayer itemSelectedAudioEffectPlayer;
 
@@ -90,7 +90,7 @@ try {
         imgView.setFitWidth(600);
         imgView.setPreserveRatio(true);
         imgView.setSmooth(true);
-        
+
 
         Label listLabel = new Label("Select a song!");
         listLabel.getStyleClass().add("song-list-header");
@@ -109,7 +109,7 @@ try {
 
             @Override
             public void onChanged(ListChangeListener.Change<? extends String> event) {
-                
+
                 playItemSelectedSound();
             }
         });
@@ -121,14 +121,14 @@ try {
                 }
             }
         });
- 
+
 
         VBox vbox = new VBox();
         vbox.getStyleClass().add("song-container");
         VBox.setVgrow(list, Priority.ALWAYS);
         vbox.getChildren().addAll(listLabel, list);
 
-        
+
         BorderPane pane = new BorderPane();
         pane.setTop(headText);
         BorderPane.setAlignment(headText, Pos.CENTER);
@@ -180,6 +180,6 @@ try {
     public void stop() {
         System.exit(0);
     }
-    
+
 }
 
